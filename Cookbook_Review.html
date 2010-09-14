@@ -1,0 +1,336 @@
+<HTML>
+<HEAD>
+<TITLE>Cookin' with Tom and Nat</TITLE>
+<LINK REL="stylesheet" HREF="slideshow.css" TYPE="text/css">
+<LINK REV="made" HREF="mailto:">
+</HEAD>
+
+<BODY>
+
+<A NAME="__index__"></A>
+<!-- INDEX BEGIN -->
+
+<UL>
+
+	<LI><A HREF="#cookin' with tom and nat">Cookin' with Tom and Nat</A></LI>
+	<UL>
+
+		<LI><A HREF="#the perl cookbook, 2d edition"><EM>The Perl Cookbook</EM>, 2d edition</A></LI>
+		<UL>
+
+			<LI><A HREF="#what's new">What's New?</A></LI>
+			<LI><A HREF="#can an amateur follow the recipes">Can an Amateur Follow the Recipes?</A></LI>
+			<LI><A HREF="#value of the chapter intros">Value of the Chapter Intros</A></LI>
+			<LI><A HREF="#should you buy this book">Should You Buy This Book?</A></LI>
+		</UL>
+
+		<LI><A HREF="#the perl cookbook, 2nd edition: new recipes"><EM>The Perl Cookbook</EM>, 2nd edition:  New Recipes</A></LI>
+	</UL>
+
+</UL>
+<!-- INDEX END -->
+
+<HR>
+<P>
+<H1><A NAME="cookin' with tom and nat">Cookin' with Tom and Nat</A></H1>
+<P>
+<H2><A NAME="the perl cookbook, 2d edition"><EM>The Perl Cookbook</EM>, 2d edition</A></H2>
+<P>
+<H3><A NAME="author">Author</A></H3>
+<P>Jim Keenan <EM><A HREF="mailto:jkeen@verizon.net">jkeen@verizon.net</A></EM>.  January 18, 2004.</P>
+<P>
+<H3><A NAME="what's new">What's New?</A></H3>
+<P>The first edition of the <EM>Perl Cookbook</EM> succeeded not only in its own right but as a model for other work as well.  As of early 2004, O'Reilly &amp; Associates has published no fewer than 22 different information technology books using the cookbook formula pioneered by Christiansen and Torkington in August 1998.</P>
+<P>The second edition of the <EM>Perl Cookbook</EM> retains all but a few of the recipes from the first edition, but adds, by my count, 80 new recipes, including two entirely new chapters.  To oversimplify, these additions may be described as being either 'internal' or 'external' to Perl.  The 'internal' recipes show new, improved ways of handling problems that Perl already was tackling at the time of the first edition.  The 'external' recipes demonstrate applications of Perl to non-Perl information technologies which have become much more important since 1998.</P>
+<P>In the first area, recipes are presented for use of newer Perl modules such as Tie::File, Switch, Inline::C, and POE.  New features such as weak references also receive new recipes.</P>
+<P>In the second area, recipes for using Perl to control Unicode, mod_perl and XML dominate.  At least eight new recipes utilize Perl 5.8's improved Unicode handling for practical applications.  mod_perl and XML are each the subject of entirely new chapters, with 27 new recipes between them.  Ten new recipes have been written for improved handling of database connections, including transactions.  LDAP and SOAP also are the subjects of new recipes.</P>
+<P>See below for my own list of the new recipes.</P>
+<P>
+<H3><A NAME="can an amateur follow the recipes">Can an Amateur Follow the Recipes?</A></H3>
+<P>The value of a recipe in the <EM>Perl Cookbook</EM> (perhaps we should say, its 'yumminess') could be measured in either of two ways.  First, does it represent the best, or nearly the best, way of solving a particular programming problem?  Second, can a programmer who is not particularly skilled in the subject matter of a given recipe cook up a script according to the recipe and get the intended result?</P>
+<P>Since I do not have the breadth or depth of programming experience that Tom and Nat have, I am not well positioned to evaluate whether their recipes are the best for the particular dishes they're trying to cook.  In the course of preparing this review, however, I tried out several recipes with useful results.  In fact, some of these recipes have led me to think of solutions to programming problems that have bedeviled me for years.</P>
+<OL>
+<LI>
+<EM>Reading Mail with Net::POP3; Prompting for Passwords with Term::ReadKey</EM>
+<P>Like most lay, non-geek computer users, for my first four years on the Internet I relied on commercial e-mail clients like Microsoft Outlook Express to receive and sort my e-mail; I knew nothing of the underlying e-mail protocols.  And, like geek and non-geek computer users everywhere, my enjoyment of the Internet has been diminished in the last year by the vast increase in spam, viruses and worms coming into my e-mail inbox.  I felt completely helpless when, just a few months ago, my daily e-mail count went from 300 items (90% junk) to 1100 items (99% junk, or worse).  I purchased a shareware program (Poco) that, unlike the version of Outlook Express I was using, enabled me to view my e-mail headers on the server before downloading.  I realized that if I could learn something more about how e-mail works, I could attack my spam problem more directly both through Perl extensions such as Mail::SpamAssassin and through the power of Perl regular extensions.  But I first needed a painless way to learn how e-mail really works.</P>
+<P>Turn to the <EM>Perl Cookbook</EM>, <STRONG>Recipe 18.5:  Reading Mail with POP3</STRONG>.  I followed the recipe on using the Net::POP3 module and was accessing my POP3 mail within minutes.</P>
+<PRE>
+    use Net::POP3;</PRE>
+<PRE>
+    my ($site, $username, $password, $pop3, $messagesref);
+    my ($k,$v);</PRE>
+<PRE>
+    $site = 'incoming.verizon.net';
+    $username = 'jkeen';
+    $password = 'jimspassword111';</PRE>
+<PRE>
+    $pop3 = Net::POP3-&gt;new($site); 
+        # Most error-checking deleted for clarity</PRE>
+<PRE>
+    defined ($pop3-&gt;login($username, $password))
+        or die &quot;Can't authenticate: $!&quot;;</PRE>
+<PRE>
+    $messagesref = $pop3-&gt;list;</PRE>
+<PRE>
+    while ( ($k,$v) = each %$messagesref ) {
+        print &quot;$k:\t$v\n&quot;;
+        my $msgref = $pop3-&gt;top( $k, 0 );
+        print &quot;@$msgref\n&quot;;
+    }</PRE>
+<P>But then I saw that the recipe called for use of a password as part of authentication.  I didn't want to type my password in plain text or store it in a Perl script, even on my home computer.  What to do?</P>
+<P>Again, turn to the <EM>Cookbook</EM>:  <STRONG>Recipe 15.10:  Reading Passwords</STRONG>.  I was quickly able to write a simple command-line prompt for a password.</P>
+<PRE>
+    use Net::POP3;
+    use Term::ReadKey;</PRE>
+<PRE>
+    # [snip declarations of variables]</PRE>
+<PRE>
+    $site = 'incoming.verizon.net';
+    $username = 'jkeen';</PRE>
+<PRE>
+    print &quot;Enter password for $username at $site:  &quot;;
+    ReadMode('noecho');
+    $password = ReadLine(0);
+    chomp $password;
+    ReadMode(0);
+    print &quot;\n&quot;;</PRE>
+<PRE>
+    # [snip balance of code]</PRE>
+<P>``Wow,'' I thought, ``I really got this to work!''  The joy of using Perl to get something done ... something you didn't think you'd have the time to learn how to do.</P>
+<P></P>
+<LI>
+<EM>Migrating from One ISP to Another with Net::FTP</EM>
+<P>People who read the New York Perlmongers list will recall that about a month ago I asked about the best way to migrate from one ISP to another, <EM>i.e.</EM>, how to get the files I had in the 'free' storage space on my old ISP to that on my new.  I tried to use WS_FTPro to establish a direct connection from the old ISP to the new, but eventually became convinced that the new ISP wouldn't allow it.  So I had to learn how to code FTP connections myself.</P>
+<P>Once again, I turned to the <EM>Perl Cookbook</EM>:  <STRONG>Recipe 18.2:  Being an FTP Client</STRONG>.  Here's how I established a connection to my new ISP:</P>
+<PRE>
+    use Net::FTP;
+    use Term::ReadKey;</PRE>
+<PRE>
+    my ($ftp, $i, @files, $dirname);</PRE>
+<PRE>
+    my %site = (
+        name        =&gt; 'ftpmysite.verizon.net',
+        username    =&gt; 'jkeen',
+        password    =&gt; undef,
+        topdir      =&gt; 'Storage'
+    );</PRE>
+<PRE>
+    $ftp = Net::FTP-&gt;new($site{'name'});</PRE>
+<PRE>
+    # [snip:  prompt for password]</PRE>
+<PRE>
+    $ftp-&gt;login($site{'username'}, $site{'password'});</PRE>
+<PRE>
+    $ftp-&gt;cwd($site{'topdir'});</PRE>
+<PRE>
+    $dirname = $ftp-&gt;pwd();
+    print &quot;Current directory:  $dirname\n\n&quot;;</PRE>
+<PRE>
+    @files = $ftp-&gt;ls();
+    print &quot;Files listed via \$ftp-&gt;ls()\n&quot;;
+    print &quot;$_\n&quot; for @files; print &quot;\n&quot;;</PRE>
+<PRE>
+    @files = $ftp-&gt;dir();
+    print &quot;Files listed via \$ftp-&gt;dir()\n&quot;;
+    print &quot;$_\n&quot; for @files;</PRE>
+<PRE>
+    $ftp-&gt;quit();</PRE>
+<P></P></OL>
+<P>
+<H3><A NAME="value of the chapter intros">Value of the Chapter Intros</A></H3>
+<P>In evaluating the <EM>Perl Cookbook</EM>, you may be tempted to measure the book by the recipes alone.  That would be a mistake, because you would pass over the excellent chapter introductions.  Let me just mention one such introduction:  that to Chapter 21 on mod_perl.</P>
+<P>In my day-to-day work, I have absolutely no use (yet) for mod_perl.  But I like to know what's going on in all aspects of Perl, so a couple of months ago I attended the New York Perlmonger's meeting where mod_perl expert Geoff Young spoke on mod_perl 2.  Now I have to admit:  I really didn't know what Geoff was talking about.  I didn't have the Second Edition of the <EM>Cookbook</EM> at that point, but if I did, I would have been able to follow Geoff with no problem.</P>
+<P>
+<H3><A NAME="should you buy this book">Should You Buy This Book?</A></H3>
+<P>Programmers turn to the Camel book to learn how to do things <EM>in</EM> Perl; they turn to the Ram book to learn how to do things <EM>with</EM> Perl.</P>
+<P>This is as true of the second edition as it was of the first.  If you have not bought the first edition and need to know Perl, buy the second.  If you already have the first edition, assess how your Perl programming needs have changed since 1998.  If they have not changed at all, don't buy the second edition.  If, however, you now need to address newer programming issues such as Unicode, mod_perl and XML, then the second edition's treatment of these issues will be worth the purchase price.  In particular, if you are part of a programming team rather than a solo practitioner (hint: this applies to the reviewer's brothers), you should definitely order a copy of the second edition, even if you already have the first.</P>
+<P>
+<H2><A NAME="the perl cookbook, 2nd edition: new recipes"><EM>The Perl Cookbook</EM>, 2nd edition:  New Recipes</A></H2>
+<DL>
+<DT><STRONG><A NAME="item_Chapter_1">Chapter 1</A></STRONG><BR>
+<DD>
+Strings
+<PRE>
+ 1.5    Using Named Unicode Characters
+ 1.8    Treating Unicode Combined Characters as Single Characters
+ 1.9    Canonicalizing Strings with Unicode Combined Characters
+ 1.10   Treating a Unicode String as Octets
+ 1.14   Properly Capitalizing a Title or Heading
+ 1.21   Constant Variables</PRE>
+<P></P>
+<DT><STRONG><A NAME="item_Chapter_4">Chapter 4</A></STRONG><BR>
+<DD>
+Arrays
+<PRE>
+ 4.4    Implementing a Sparse Array</PRE>
+<P></P>
+<DT><STRONG><A NAME="item_Chapter_5">Chapter 5</A></STRONG><BR>
+<DD>
+Hashes
+<PRE>
+ 5.3    Creating a Hash with Immutable Keys or Values</PRE>
+<P></P>
+<DT><STRONG><A NAME="item_Chapter_6">Chapter 6</A></STRONG><BR>
+<DD>
+Pattern Matching
+<PRE>
+ 6.17   Matching Nested Patterns</PRE>
+<P></P>
+<DT><STRONG><A NAME="item_Chapter_7">Chapter 7</A></STRONG><BR>
+<DD>
+File Access
+<PRE>
+ 7.6    Writing a Subroutine that Takes Filehandles as Built-ins Do
+ 7.13   Storing Multiple Files in the DATA Area
+ 7.14   Writing a Unix-Style Filter Program</PRE>
+<P></P>
+<DT><STRONG><A NAME="item_Chapter_8">Chapter 8</A></STRONG><BR>
+<DD>
+File Contents
+<PRE>
+ 8.18   Treating a File as an Array
+ 8.19   Setting the Default I/O Layers
+ 8.20   Reading or Writing Unicode from a Filehandle
+ 8.21   Converting Microsoft Text Files into Unicode
+ 8.22   Comparing the Contents of Two Files
+ 8.23   Pretending a String Is a File
+ 8.27   Program:  Flat File Indexes</PRE>
+<P></P>
+<DT><STRONG><A NAME="item_Chapter_9">Chapter 9</A></STRONG><BR>
+<DD>
+Directories
+<PRE>
+ 9.11   Working with Symbolic File Permissions Instead of Octal Values</PRE>
+<P></P>
+<DT><STRONG><A NAME="item_Chapter_10">Chapter 10</A></STRONG><BR>
+<DD>
+Subroutines
+<PRE>
+ 10.17  Writing a Switch Statement</PRE>
+<P></P>
+<DT><STRONG><A NAME="item_Chapter_11">Chapter 11</A></STRONG><BR>
+<DD>
+References and Records
+<PRE>
+ 11.15  Coping with Circular Data Structures Using Weak References
+ 11.16  Program:  Outlines</PRE>
+<P></P>
+<DT><STRONG><A NAME="item_Chapter_12">Chapter 12</A></STRONG><BR>
+<DD>
+Packages, Libraries, and Modules
+<PRE>
+ 12.5   Making Functions Private to a Module
+ 12.13  Overriding a Built-in Function in All Packages
+ 12.15  Customizing Warnings
+ 12.19  Writing Extensions in C with Inline::C</PRE>
+<P></P>
+<DT><STRONG><A NAME="item_Chapter_13">Chapter 13</A></STRONG><BR>
+<DD>
+Classes, Objects, and Ties
+<PRE>
+ 13.7   Copy Constructors</PRE>
+<P></P>
+<DT><STRONG><A NAME="item_Chapter_14">Chapter 14</A></STRONG><BR>
+<DD>
+Database Access
+<PRE>
+ 14.8   Saving Query Results to Excel or CSV
+ 14.10  Escaping Quotes
+ 14.11  Dealing with Database Errors
+ 14.12  Repeating Queries Efficiently
+ 14.13  Building Queries Programmatically
+ 14.14  Finding the Number of Rows Returned by a Query
+ 14.15  Using Transactions
+ 14.16  Viewing Data One Page at a Time
+ 14.17  Querying a CSV File with SQL
+ 14.18  Using SQL Without a Database Server</PRE>
+<P></P>
+<DT><STRONG><A NAME="item_Chapter_15">Chapter 15</A></STRONG><BR>
+<DD>
+Interactivity
+<PRE>
+ 15.18  Graphing Data
+ 15.19  Thumbnailing Images
+ 15.20  Adding Text to an Image
+ 15.23  Program:  graphbox</PRE>
+<P></P>
+<DT><STRONG><A NAME="item_Chapter_16">Chapter 16</A></STRONG><BR>
+<DD>
+Process Management and Communication
+<PRE>
+ 16.22  Turning Signals into Fatal Errors</PRE>
+<P></P>
+<DT><STRONG><A NAME="item_Chapter_17">Chapter 17</A></STRONG><BR>
+<DD>
+Sockets
+<PRE>
+ 17.14  Multitasking Server with Threads
+ 17.15  Writing a Multitasking Server with POE
+ 17.19  Managing Multiple Streams of Input</PRE>
+<P></P>
+<DT><STRONG><A NAME="item_Chapter_18">Chapter 18</A></STRONG><BR>
+<DD>
+Internet Services
+<PRE>
+ 18.8   Accessing an LDAP Server
+ 18.9   Sending Attachments in Mail
+ 18.10  Extracting Attachments from Mail
+ 18.11  Writing an XML-RPC Server
+ 18.12  Writing an XML-RPC Client
+ 18.13  Writing a SOAP Server
+ 18.14  Writing a SOAP Client
+ 18.15  Program:  rfrm</PRE>
+<P></P>
+<DT><STRONG><A NAME="item_Chapter_20">Chapter 20</A></STRONG><BR>
+<DD>
+Web Automation
+<PRE>
+ 20.14  Using Cookies
+ 20.15  Fetching Password-Protected Pages
+ 20.16  Fetching https:// Web Pages
+ 20.17  Resuming an HTTP GET
+ 20.18  Parsing HTML
+ 20.19  Extracting Tble Data
+ 20.21  Program:  hrefsub</PRE>
+<P></P>
+<DT><STRONG><A NAME="item_Chapter_21">Chapter 21</A></STRONG><BR>
+<DD>
+mod_perl
+<PRE>
+ 21.1   Authenticating
+ 21.2   Setting Cookies
+ 21.3   Accessing Cookie Values
+ 21.4   Redirecting the Browser
+ 21.5   Interrogating Headers
+ 21.6   Accessing Form Parameters
+ 21.7   Receiving Uploaded Files
+ 21.8   Speeding Up Database Access
+ 21.9   Customizing Apache's Logging
+ 21.10  Transparently Storing Information in URLs
+ 21.11  Communicating Between mod_perl and PHP
+ 21.12  Migrating from CGI to mod_perl
+ 21.13  Sharing Information Between Handlers
+ 21.14  Reloading Changed Modules
+ 21.15  Benchmarking a mod_perl Application
+ 21.16  Templating with HTML::Mason
+ 21.17  Templating with Template Toolkit</PRE>
+<P></P>
+<DT><STRONG><A NAME="item_Chapter_22">Chapter 22</A></STRONG><BR>
+<DD>
+XML
+<PRE>
+ 22.1   Parsing XML into Data Structures
+ 22.2   Parsing XML into a DOM Tree
+ 22.3   Parsing XML into SAX Events
+ 22.4   Making Simple Changes to Elements or Text
+ 22.5   Validating XML
+ 22.6   Finding Elements and Text Within and XML Document
+ 22.7   Processing SML Stylesheet Transformations
+ 22.8   Processing Files Larger Than Available Memory
+ 22.9   Reading and Writing RSS Files
+ 22.10  Writing XML</PRE>
+<P></P></DL>
+
+</BODY>
+
+</HTML>

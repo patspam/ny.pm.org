@@ -1,0 +1,28 @@
+body {
+     background-color: black;
+     color: #cc9900;
+     font-family: monospace;
+}
+
+#content {
+    width: 85%;
+    margin: auto auto;
+}
+
+h1 {
+    font-size: 2em;
+    font-weight: bold;
+    text-align: center;
+}
+
+.nobr {
+    white-space: nowrap;
+}
+
+.intro {
+    padding: 1em 0 2em 0;
+}
+
+dt {
+    font-weight: bold;
+}

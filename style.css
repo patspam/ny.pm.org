@@ -4,15 +4,22 @@ body {
      font-family: monospace;
 }
 
+a {
+    color: #cc9900;
+}
+
 #content {
     width: 85%;
     margin: auto auto;
 }
 
+#header {
+    text-align: center;
+}
+
 h1 {
     font-size: 2em;
     font-weight: bold;
-    text-align: center;
 }
 
 .nobr {
@@ -20,7 +27,7 @@ h1 {
 }
 
 .intro {
-    padding: 1em 0 2em 0;
+    padding: 1em 0 1em 0;
 }
 
 dt {
